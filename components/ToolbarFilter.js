@@ -11,8 +11,8 @@ export default class ToolbarFilter extends Component {
         return (
             <View>
                 <SearchBar
-                    lightTheme
                     onChangeText={onChangeLocation}
+                    lightTheme
                     placeholder='Location' />
                 <View style={styles.buttonRow}>
                     <Button

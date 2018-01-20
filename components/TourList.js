@@ -1,57 +1,52 @@
 import React, {Component} from 'react'
 import { View, Text, StyleSheet, TextInput, FlatList, Button, Alert, ListView, Image } from 'react-native';
-import {Header} from 'react-native-elements'
+import {Avatar, Header, Tile, Rating} from 'react-native-elements'
 import ToolbarFilter from './ToolbarFilter'
-const sampleData = [{
-    "_id":"5a557f7edef4fd1288970af4",
-    "title":"Test2Tour",
-    "path":[{"lat":37.322998,"lon":-122.032182}],
-    "userId":"5a505f940387dea882210931",
-    "categoryName":["Food & Drink"],
-    "info":{
-        "provide":"Nothing",
-        "bring":"Everything",
-        "des":"This is a test tour where you get everything",
-        "imgUrls":["http://www.visitcalifornia.com/sites/default/files/styles/welcome_image/public/VC_NavigateBigSur_GarrapataStatePark_Stock_RM_E1AJNB_1280x640.jpg"]},
-        "maxUsers":4,
-        "repeat":null,
-        "specificDates":["2018-12-03T10:15:30.000Z"]}
-    ]
+import {client} from '../graphql'
+import gql from 'graphql-tag'
+import {sleepSync} from '../utils'
 
+const ds = new ListView.DataSource({ 
+        rowHasChanged: (r1, r2) => r1 !== r2 });
 export default class TourList extends React.Component {
-    constructor (props) { 
- 
+    constructor (props) {         
         super (props); 
-     
-        const ds = new ListView.DataSource({ 
-          rowHasChanged: (r1, r2) => r1 !== r2 }); 
-     
-        this.state = { 
-          dataSource: ds.cloneWithRows(sampleData) 
-        }; 
       } 
-    render() {
-        return <View>
-            <Header 
-                backgroundColor='#72a35b'
-                leftComponent={{ icon: "menu", color: "#fff" }} 
-                centerComponent={{ text: "Lokal", style: { color: "#fff" } }} 
-                rightComponent={{ icon: "home", color: "#fff" }} />
+      
+    state = {
+        dataSource:ds.cloneWithRows(this.props.navigation.state.params.sampleData)
+    }
 
+    render() {
+        /*while(this.state.dataSource == null) {
+            //sleepSync(2)
+            console.log("sleep: "+ this.state.dataSource)
+        }*/
+        return <View>
             <ToolbarFilter />
             <ListView dataSource={this.state.dataSource} renderRow={rowData => {
                 const img = rowData.info.imgUrls[0];
-                return <View>
-                    <Image style={{ height: 200, width: 400 }} source={{ uri: img }} />
-                    <Text style={styles.title}>{rowData.title}</Text>
-                    <Text style={styles.category}>
-                      {rowData.categoryName[0]}
-                    </Text>
-                    <Text> {rowData.info.des}</Text>
-                  </View>;
-              }}>
-              //renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-              {" "}
+                //const pic = rowData.user.pic;
+                return <Tile
+                    imageSrc={{uri:img}}
+                    title={rowData.title}
+                    contentContainerStyle={{height: 120}}
+                >     
+                <View>  
+                {/*<View style={{flex: 2, flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={{flex:1}}>{rowData.categoryName[0]}</Text>
+                    <View style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
+                        <Avatar
+                            rounded
+                            source={{uri: rowData.user.pic}}
+                            onPress={() => console.log("Works!")}
+                            activeOpacity={0.7}
+                        />
+                        <Text>{rowData.user.name}</Text>
+                    </View>
+            </View> */}
+                </View>
+                </Tile>}}>
             </ListView>
           </View>;
     }
